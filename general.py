@@ -38,7 +38,37 @@ def createRandom(n):
         repeated = True
     return state,position
 #def linear_conflict(state1,state2,n):
-    
+
+def swap(state,pos,n,direct):
+    #1234URDL
+    x = pos%n
+    y = pos//n
+    new_state = copy.deepcopy(state)
+    if direct == 1:
+        if y!=0:
+            temp = new_state[pos - n]
+            new_state[pos-n] = 0
+            new_state[pos] = temp
+            return new_state, pos - n
+    elif direct ==4:
+        if x!=n-1:
+            temp = new_state[pos + 1]
+            new_state[pos + 1] = 0
+            new_state[pos] = temp
+            return new_state , pos + 1
+    elif direct ==2:
+        if y!=n-1:
+            temp = new_state[pos + n]
+            new_state[pos + n] = 0
+            new_state[pos] = temp
+            return new_state, pos + n  
+    else:
+        if x!=0:
+            temp = new_state[pos - 1]
+            new_state[pos - 1] = 0
+            new_state[pos] = temp
+            return new_state, pos - 1
+    return None,None
 
 def bfs(state1,state2,n):
     return 0
