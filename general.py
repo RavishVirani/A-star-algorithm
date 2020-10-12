@@ -73,6 +73,54 @@ def swap(state,pos,n,direct):
 def bfs(state1,state2,n):
     return 0
 
+def misplaced_positions(state1, state2, n):
+    h = 0
+    row1 = [1,2,3]
+    row2 = [4,5,6]
+    row3 = [7,8,0]
+    col1 = [1,4,7]
+    col2 = [2,5,8]
+    col3 = [3,6,0]
+    
+    if (state1[0] not in row1):
+        h+=1
+    if (state1[0] not in col1):
+        h+=1
+    if (state1[1] not in row1):
+        h+=1
+    if (state1[1] not in col2):
+        h+=1
+    if (state1[2] not in row1):
+        h+=1
+    if (state1[2] not in col3):
+        h+=1
+    if (state1[3] not in row2):
+        h+=1
+    if (state1[3] not in col1):
+        h+=1
+    if (state1[4] not in row2):
+        h+=1
+    if (state1[4] not in col2):
+        h+=1
+    if (state1[5] not in row2):
+        h+=1
+    if (state1[5] not in col3):
+        h+=1
+    if (state1[6] not in row3):
+        h+=1
+    if (state1[6] not in col1):
+        h+=1
+    if (state1[7] not in row3):
+        h+=1
+    if (state1[7] not in col2):
+        h+=1
+    if (state1[8] not in row3):
+        h+=1
+    if (state1[8] not in col3):
+        h+=1
+
+    return h
+
 def makeNode(current_node,goal_state,queue,heuristic,direct,q,SIZE,visited):
     temp_state, pos = swap(current_node.state,current_node.position,SIZE,direct)
     #Need pos to be the new position of the 0 tile
@@ -110,7 +158,9 @@ class Node:
 SIZE = 3 # the side length of the puzzle. n where n creates an nxn puzzle
 
 goal_state = list(range(1,SIZE*SIZE))
+
 goal_state.append(0)
+print(goal_state)
 
 searching = PriorityQueue()
 visited = []
@@ -120,10 +170,10 @@ solutionCost = []
 nodeCost = []
 q = 0 #Insertion order
 
-FUNCTION = bfs
+#FUNCTION = bfs
 #FUNCTION = manhattan
 #FUNCTION = misplaced_tiles
-#FUNCTION = misplaced_positions
+FUNCTION = misplaced_positions
 
 #TIME ISSUE Look for inefficiencies or translate to faster language?
 #Same 100 boards for the heuristics or different? Should we also guarantee distinct patterns?
@@ -163,12 +213,10 @@ for i in range(100):
 
         #Take the next node that has the smallest value
         current_node = searching.get()[2]
+        
     print("FINISHED PUZZLE NUBMER {}".format(i))
     solutionCost.append(current_node.totalCost)
     nodeCost.append(num_node)
 
 print(solutionCost)
 print(nodeCost)
-
-
-    
