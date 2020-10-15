@@ -73,6 +73,15 @@ def swap(state,pos,n,direct):
 def bfs(state1,state2,n):
     return 0
 
+def misplaced_tiles(state1, state2, n):
+    h = 0
+
+    for i in range(n*n):
+        if state1[i] != 0 and state1[i] != state2[i]:
+            h += 1
+    
+    return h
+
 def misplaced_positions(state1, state2, n):
     h = 0
     row1 = [1,2,3]
@@ -172,8 +181,8 @@ q = 0 #Insertion order
 
 #FUNCTION = bfs
 #FUNCTION = manhattan
-#FUNCTION = misplaced_tiles
-FUNCTION = misplaced_positions
+FUNCTION = misplaced_tiles
+# FUNCTION = misplaced_positions
 
 #TIME ISSUE Look for inefficiencies or translate to faster language?
 #Same 100 boards for the heuristics or different? Should we also guarantee distinct patterns?
