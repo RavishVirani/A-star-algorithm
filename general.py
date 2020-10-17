@@ -163,7 +163,8 @@ class Node:
             for q in range(n):
                 print(self.state[i*n+q],end = " ")
             print()
-    
+    def __eq__(self,other):
+        return self.state == other
 SIZE = 3 # the side length of the puzzle. n where n creates an nxn puzzle
 
 goal_state = list(range(1,SIZE*SIZE))
