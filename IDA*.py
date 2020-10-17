@@ -1,5 +1,5 @@
 from collections import deque
-from general import disorder,match,createRandom,manhattan,manhattan_one,swap,Node
+from general import disorder,match,createRandom,manhattan,swap,Node
 
 
 def iterative_main(root):
@@ -53,7 +53,6 @@ nodeCost = []
 used = []
 
 heuristic = manhattan
-heuristicOne = manhattan_one
 
 #TIME ISSUE Look for inefficiencies or translate to faster language?
 for i in range(100):
