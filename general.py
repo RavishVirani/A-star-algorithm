@@ -179,6 +179,7 @@ current_node = None
 solutionCost = []
 nodeCost = []
 q = 0 #Insertion order
+used = []
 
 #FUNCTION = bfs
 #FUNCTION = manhattan
@@ -192,7 +193,8 @@ for i in range(100):
     #Create the random starting state
     while True:
         current_state,pos = createRandom(SIZE*SIZE)
-        if disorder(current_state)%2 == disorder(goal_state)%2: # the disorder of goal is even
+        if disorder(current_state)%2 == disorder(goal_state)%2 and current_state not in used: # the disorder of goal is even
+            used.append(current_state): # the disorder of goal is even
 
             #Test Puzzles
             #current_state = [5,2,11,9,3,15,8,6,14,10,1,7,4,0,13,12]
