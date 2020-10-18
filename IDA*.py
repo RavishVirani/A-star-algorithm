@@ -1,5 +1,5 @@
 from collections import deque
-from general import disorder,match,createRandom,manhattan,swap,opposite,Node
+from general import possible,match,createRandom,manhattan,swap,opposite,Node
 
 
 def iterative_main(root):
@@ -61,7 +61,7 @@ for i in range(100):
     #Create the random starting state
     while True:
         current_state,pos = createRandom(SIZE*SIZE)
-        if disorder(current_state)%2 == disorder(goal_state)%2 and current_state not in used: # the disorder of goal is even
+        if possible(current_state,pos,SIZE) and current_state not in used: # the disorder of goal is even
             used.append(current_state)
 
             #current_state = [1,2,3,4,5,6,0,7,8]
