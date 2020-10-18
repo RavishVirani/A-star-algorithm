@@ -37,7 +37,17 @@ def createRandom(n):
                     position = i
         repeated = True
     return state,position
-#def linear_conflict(state1,state2,n):
+
+def opposite(direct):
+    if direct ==1:
+        return 2
+    elif direct==2:
+        return 1
+    elif direct ==3:
+        return 4
+    elif direct ==4:
+        return 3
+    return 0
 
 def swap(state,pos,n,direct):
     #1234URDL
@@ -131,20 +141,21 @@ def misplaced_positions(state1, state2, n):
     return h
 
 def makeNode(current_node,goal_state,queue,heuristic,direct,q,SIZE,visited):
-    temp_state, pos = swap(current_node.state,current_node.position,SIZE,direct)
-    #Need pos to be the new position of the 0 tile
-    if temp_state != None and temp_state not in visited:
-        temp_node = Node(temp_state,current_node.totalCost+1,pos)
-        h = heuristic(temp_node.state, goal_state,SIZE)
-        
-        #Heuristic applied only on the tile moved
-        #weight = current_node.hCost - ONE_FUNCTION(current_node.state,goal_state,SIZE,pos) + ONE_FUNCTION(temp_state,goal_state,SIZE,current_node.position)
-        #temp_node.hCost = weight
+    if opposite(current_node)!=direct:
+        temp_state, pos = swap(current_node.state,current_node.position,SIZE,direct)
+        #Need pos to be the new position of the 0 tile
+        if temp_state != None and temp_state not in visited:
+            temp_node = Node(temp_state,current_node.totalCost+1,pos)
+            h = heuristic(temp_node.state, goal_state,SIZE)
+            temp_node.parent = direct
+            #Heuristic applied only on the tile moved
+            #weight = current_node.hCost - ONE_FUNCTION(current_node.state,goal_state,SIZE,pos) + ONE_FUNCTION(temp_state,goal_state,SIZE,current_node.position)
+            #temp_node.hCost = weight
 
-        #Each Queue item is (F(n) , Order put in, node)
-        #queue.put((temp_node.totalCost + h,10000000000-q,temp_node)) # This is LIFO
-        queue.put((temp_node.totalCost + h,q,temp_node)) # This is FIFO        
-        q+=1
+            #Each Queue item is (F(n) , Order put in, node)
+            #queue.put((temp_node.totalCost + h,10000000000-q,temp_node)) # This is LIFO
+            queue.put((temp_node.totalCost + h,q,temp_node)) # This is FIFO        
+            q+=1
     return q
 
 
@@ -152,6 +163,7 @@ class Node:
     state = None
     #parent #needed? can be nice to visualize
     totalCost = None #Cost so far 
+    parent = None
     position = None # position of the blank so swapping will be slightly faster
     hCost = None # current heuristic cost. Could be cheaper to keep updating heuristic costs rather than recomputing them
     def __init__(self,state,totalCost,pos):
