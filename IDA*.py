@@ -1,5 +1,5 @@
 from collections import deque
-from general import disorder,match,createRandom,manhattan,swap,Node
+from general import disorder,match,createRandom,manhattan,swap,opposite,Node
 
 
 def iterative_main(root):
@@ -28,17 +28,19 @@ def iterative_helper(stack,bound):
         return total
     smallest = float("inf")
     for i in range(1,5):
-        temp_state,pos = swap(node.state,node.position,SIZE,i)
-        if pos is not None and temp_state not in stack:
-            temp_node = Node(temp_state,node.totalCost+1,pos)
-            stack.append(temp_node)
-            
-            cost = iterative_helper(stack,bound)
-            if cost < 0:
-                return cost
-            if cost<smallest:
-                smallest = cost
-            stack.pop()
+        if opposite(node.parent) != i:
+            temp_state,pos = swap(node.state,node.position,SIZE,i)
+            if pos is not None and temp_state not in stack:
+                temp_node = Node(temp_state,node.totalCost+1,pos)
+                temp_node.parent = i
+                stack.append(temp_node)
+
+                cost = iterative_helper(stack,bound)
+                if cost < 0:
+                    return cost
+                if cost<smallest:
+                    smallest = cost
+                stack.pop()
     return smallest
 
 SIZE = 4 # the side length of the puzzle. n where n creates an nxn puzzle
