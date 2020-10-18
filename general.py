@@ -11,6 +11,19 @@ def disorder(state):
                 total+=1
     return total
 
+def possible(state,position,width):
+    #Assume that the second state is the goal state 1,..,n,0
+    if width%2 ==1:
+        return disorder(state)%2 == 0
+    else:
+        y = position//width
+        inversion = disorder(state)%2
+        if y%2==0 and inversion==1:
+            return True
+        elif y%2==1 and inversion==0:
+            return True
+        return False
+
 def match(state1,state2):
     if len(state1) == len(state2):
         for i in range(len(state1)):
