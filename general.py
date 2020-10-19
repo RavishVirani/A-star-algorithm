@@ -93,8 +93,54 @@ def swap(state,pos,n,direct):
             return new_state, pos - 1
     return None,None
 
-def bfs(state1,state2,n):
-    return 0
+def manhattan(state1, state2, n):
+    res = 0
+    for i in range(n*n):
+        if state1[i] != 0 and state1[i] != state2[i]:
+            ci = state2.index(state1[i])
+            y = (i // n) - (ci // n)
+            x = (i % n) - (ci % n)
+            res += abs(y) + abs(x)
+    return res
+
+def linear_conflicts(state1, state2, n):
+
+    def count_conflicts(state1_row, state2_row, n, ans=0):
+        counts = [0 for x in range(n)]
+        for i, tile_1 in enumerate(state1_row):
+            if tile_1 in state2_row and tile_1 != 0:
+                for j, tile_2 in enumerate(state1_row):
+                    if tile_2 in state2_row and tile_2 != 0:
+                        if tile_1 != tile_2:
+                            if (state2_row.index(tile_1) > state2_row.index(tile_2)) and i < j:
+                                counts[i] += 1
+                            if (state2_row.index(tile_1) < state2_row.index(tile_2)) and i > j:
+                                counts[i] += 1
+        if max(counts) == 0:
+            return ans * 2
+        else:
+            i = counts.index(max(counts))
+            state1_row[i] = -1
+            ans += 1
+            return count_conflicts(state1_row, state2_row, n, ans)
+
+    res = manhattan(state1, state2, n)
+    state1_rows = [[] for y in range(n)] 
+    state1_columns = [[] for x in range(n)] 
+    state2_rows = [[] for y in range(n)] 
+    state2_columns = [[] for x in range(n)] 
+    for y in range(n):
+        for x in range(n):
+            idx = (y * n) + x
+            state1_rows[y].append(state1[idx])
+            state1_columns[x].append(state1[idx])
+            state2_rows[y].append(state2[idx])
+            state2_columns[x].append(state2[idx])
+    for i in range(n):
+            res += count_conflicts(state1_rows[i], state2_rows[i], n)
+    for i in range(n):
+            res += count_conflicts(state1_columns[i], state2_columns[i], n)
+    return res
 
 def misplaced_tiles(state1, state2, n):
     h = 0
@@ -106,52 +152,22 @@ def misplaced_tiles(state1, state2, n):
     return h
 
 def misplaced_positions(state1, state2, n):
-    h = 0
-    row1 = [1,2,3]
-    row2 = [4,5,6]
-    row3 = [7,8,0]
-    col1 = [1,4,7]
-    col2 = [2,5,8]
-    col3 = [3,6,0]
-    
-    if (state1[0] not in row1):
-        h+=1
-    if (state1[0] not in col1):
-        h+=1
-    if (state1[1] not in row1):
-        h+=1
-    if (state1[1] not in col2):
-        h+=1
-    if (state1[2] not in row1):
-        h+=1
-    if (state1[2] not in col3):
-        h+=1
-    if (state1[3] not in row2):
-        h+=1
-    if (state1[3] not in col1):
-        h+=1
-    if (state1[4] not in row2):
-        h+=1
-    if (state1[4] not in col2):
-        h+=1
-    if (state1[5] not in row2):
-        h+=1
-    if (state1[5] not in col3):
-        h+=1
-    if (state1[6] not in row3):
-        h+=1
-    if (state1[6] not in col1):
-        h+=1
-    if (state1[7] not in row3):
-        h+=1
-    if (state1[7] not in col2):
-        h+=1
-    if (state1[8] not in row3):
-        h+=1
-    if (state1[8] not in col3):
-        h+=1
-
-    return h
+    res = 0
+    state1 = list(state1)
+    state2 = list(state2)
+    while state1 != state2:
+        zi = state1.index(0)
+        if state2[zi] != 0:
+            sv = state2[zi]
+            ci = state1.index(sv)
+            state1[ci], state1[zi] = state1[zi], state1[ci]
+        else:
+            for i in range(n * n):
+                if state2[i] != state1[i]:
+                    state1[i], state1[zi] = state1[zi], state1[i]
+                    break
+        res += 1
+    return res
 
 def makeNode(current_node,goal_state,queue,heuristic,direct,q,SIZE,visited):
     if opposite(current_node)!=direct:
@@ -195,7 +211,7 @@ SIZE = 3 # the side length of the puzzle. n where n creates an nxn puzzle
 goal_state = list(range(1,SIZE*SIZE))
 
 goal_state.append(0)
-print(goal_state)
+print("Goal State : " , goal_state)
 
 searching = PriorityQueue()
 visited = []
@@ -255,5 +271,5 @@ for i in range(100):
     solutionCost.append(current_node.totalCost)
     nodeCost.append(num_node)
 
-print(solutionCost)
-print(nodeCost)
+print("Solution Cost : " , solutionCost)
+print("Node Cost : " , nodeCost)
