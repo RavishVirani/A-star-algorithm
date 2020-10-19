@@ -1,6 +1,6 @@
 from collections import deque
 import random
-from queue import PriorityQueue # I read the documentation. Implements a heap under the hood
+from queue import PriorityQueue
 import copy
 
 num_nodes = int
@@ -14,7 +14,10 @@ def match(state1,state2):
     return False
 
 def swap(state,pos,n,direct):
-    #1234URDL
+    # 1==UP
+    # 2==DOWN
+    # 3==LEFT
+    # 4==RIGHT
     x = pos%n
     y = pos//n
     new_state = copy.deepcopy(state)
@@ -64,6 +67,7 @@ def createRandom(n):
     return state,position
 
 def opposite(direct):
+    # Returns the opposite direction of the swap function
     if direct ==1:
         return 2
     elif direct==2:
@@ -75,7 +79,6 @@ def opposite(direct):
     return 0
 
 def disorder(state):
-    #If two states have the same parity of disorder, they can reach each other
     total = 0
     for i in range(len(state)):
         for n in range(i+1,len(state)):
@@ -84,10 +87,10 @@ def disorder(state):
     return total
 
 def possible(state,position,width):
-    #Assume that the second state is the goal state 1,..,n,0
-    if width%2 ==1:
+    #Assume that the second state is the goal state [1,..,n,0]
+    if width%2 ==1: #Odd Side Length
         return disorder(state)%2 == 0
-    else:
+    else: #Even Side Length
         y = position//width
         inversion = disorder(state)%2
         if y%2==0 and inversion==1:
@@ -188,11 +191,9 @@ def linear_conflicts(state1, state2, n):
 
 def misplaced_tiles(state1, state2, n):
     h = 0
-
     for i in range(n*n):
         if state1[i] != 0 and state1[i] != state2[i]:
             h += 1
-    
     return h
 
 def misplaced_positions(state1, state2, n):
@@ -215,11 +216,10 @@ def misplaced_positions(state1, state2, n):
 
 class Node:
     state = None
-    #parent #needed? can be nice to visualize
-    totalCost = None #Cost so far 
+    totalCost = None
     parent = None
     position = None # position of the blank so swapping will be slightly faster
-    hCost = None # current heuristic cost. Could be cheaper to keep updating heuristic costs rather than recomputing them
+    hCost = None
     def __init__(self,state,totalCost,pos):
         self.state = state
         self.totalCost = totalCost
@@ -234,11 +234,14 @@ class Node:
 
 SIZE = 4 # the side length of the puzzle. n where n creates an nxn puzzle
 
+#The goal is [1,...,n^2-1,0]
+# Ex for the 3x3 puzzle(8-puzzle): [1,2,3,4,5,6,7,8,0]
 goal_state = list(range(1,SIZE*SIZE))
 goal_state.append(0)
 
 current_node = None
 num_nodes = 0
+path = 0
 solutionCost = []
 nodeCost = []
 used = []
@@ -248,24 +251,24 @@ heuristic = misplaced_tiles
 #heuristic = manhattan
 #heuristic = linear_conflicts
 
-#TIME ISSUE Look for inefficiencies or translate to faster language?
 for i in range(100):
     #Create the random starting state
     while True:
         current_state,pos = createRandom(SIZE*SIZE)
-        if possible(current_state,pos,SIZE) and current_state not in used: # the disorder of goal is even
+        if possible(current_state,pos,SIZE) and current_state not in used:
             used.append(current_state)
-
-            #current_state = [1,2,3,4,5,6,0,7,8]
-            #pos = 6
             current_node = Node(current_state,0,pos)
-            #current_node.hCost = heuristic(current_state, goal_state,SIZE)
             current_node.display(SIZE)
             break
     num_nodes = 0
-    solutionCost.append(iterative_main(current_node))
+    path = iterative_main(current_node)
+    
+    solutionCost.append(path)
     nodeCost.append(num_nodes)
     print("Solved Puzzle {}".format(i+1))
+    print("Path cost: {}".format(path))
+    print("Nodes Expanded: {}".format(num_nodes))
+    print()
 
-print("Solution Cost : " , solutionCost)
-print("Node Cost : " , nodeCost)
+print("All Solution Costs : " , solutionCost)
+print("All Node Costs : " , nodeCost)
