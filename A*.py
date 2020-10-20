@@ -243,7 +243,7 @@ for i in range(100):
     while True:
         current_state,pos = createRandom(SIZE*SIZE)
         if possible(current_state,pos,SIZE) and current_state not in used:
-            used.append(current_state):
+            used.append(current_state)
             current_node = Node(current_state,0,pos)
             #current_node.hCost = FUNCTION(current_state, goal_state,SIZE)
             current_node.display(SIZE)
@@ -272,6 +272,7 @@ for i in range(100):
     print("FINISHED PUZZLE NUMBER {}".format(i+1))
     print("Path Cost: {}".format(current_node.totalCost))
     print("Number of Nodes Expanded: {}".format(num_node))
+    print()
     
     solutionCost.append(current_node.totalCost)
     nodeCost.append(num_node)
