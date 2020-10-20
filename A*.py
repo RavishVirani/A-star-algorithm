@@ -165,18 +165,36 @@ def misplaced_positions(state1, state2, n):
         res += 1
     return res
 
+def binary_search(array,thing):
+    first = 0
+    last = len(array)-1
+    low = -1
+    high = -1
+    while first <= last:
+        mid = (first + last)//2
+        if array[mid]>thing:
+            last = mid - 1
+        elif array[mid]<thing:
+            first = mid + 1
+        else:
+            return mid
+    return first
+
 def makeNode(current_node,goal_state,queue,heuristic,direct,q,SIZE,visited):
     if opposite(current_node)!=direct:
         temp_state, pos = swap(current_node.state,current_node.position,SIZE,direct)
-        if temp_state != None and temp_state not in visited:
-            temp_node = Node(temp_state,current_node.totalCost+1,pos)
-            h = heuristic(temp_node.state, goal_state,SIZE)
-            temp_node.parent = direct
+        if temp_state != None:
+            index = binary_search(visited,temp_state)
+            if len(visited) == index or visited[index] != temp_state:
+                temp_node = Node(temp_state,current_node.totalCost+1,pos)
+                temp_node.parent = direct
+                
+                h = heuristic(temp_node.state, goal_state,SIZE)
 
-            #Each Queue item is (F(n) , Order put in, node)
-            #queue.put((temp_node.totalCost + h,10000000000-q,temp_node)) # This is LIFO
-            queue.put((temp_node.totalCost + h,q,temp_node)) # This is FIFO        
-            q+=1
+                #Each Queue item is (F(n) , Order put in, node)
+                #queue.put((temp_node.totalCost + h,10000000000-q,temp_node)) # This is LIFO
+                queue.put((temp_node.totalCost + h,q,temp_node)) # This is FIFO        
+                q+=1
     return q
 
 
@@ -243,7 +261,9 @@ for i in range(100):
         q=makeNode(current_node,goal_state,searching,FUNCTION,4,q,SIZE,visited) # Left
 
         #Add current node as one that is already visited
-        visited.append(current_node.state)
+        index = binary_search(visited,current_node.state)
+        visited.insert(index,current_node.state)
+        
         num_node += 1
 
         #Take the next node that has the smallest value
